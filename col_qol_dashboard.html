@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cost of Living & Quality of Life — 15 Countries 2024/2025</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F5F2EB;
+    --bg2: #EDE9E0;
+    --ink: #1A1814;
+    --ink2: #5C5750;
+    --ink3: #9C968E;
+    --accent: #C8553D;
+    --accent2: #3B6E8C;
+    --accent3: #5A7A3A;
+    --gold: #B89A4E;
+    --card: #FDFAF4;
+    --border: rgba(26,24,20,0.12);
+  }
+
+  body {
+    font-family: 'Instrument Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  header {
+    background: var(--ink);
+    color: var(--bg);
+    padding: 3rem 4rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    border: 1px solid rgba(245,242,235,0.08);
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: 200px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    border: 1px solid rgba(245,242,235,0.06);
+  }
+  .header-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+  }
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: 1.1;
+    color: var(--bg);
+    margin-bottom: 0.75rem;
+    max-width: 700px;
+  }
+  header p {
+    font-size: 14px;
+    color: rgba(245,242,235,0.6);
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.03em;
+  }
+
+  .meta-strip {
+    background: var(--accent);
+    padding: 0.6rem 4rem;
+    display: flex; gap: 2.5rem; align-items: center;
+    flex-wrap: wrap;
+  }
+  .meta-item {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: rgba(245,242,235,0.9);
+  }
+  .meta-item strong { color: #fff; }
+
+  main { padding: 3rem 4rem; max-width: 1400px; }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    margin-bottom: 0.5rem;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .question-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    margin-bottom: 3rem;
+    overflow: hidden;
+  }
+  .question-header {
+    padding: 1.75rem 2rem;
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+  .q-number {
+    font-family: 'DM Serif Display', serif;
+    font-size: 3.5rem;
+    line-height: 1;
+    color: var(--border);
+    font-style: italic;
+  }
+  .q-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    line-height: 1.3;
+    color: var(--ink);
+    margin-bottom: 0.5rem;
+  }
+  .q-desc {
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--ink2);
+    max-width: 680px;
+  }
+  .use-case-tag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 2px;
+    margin-bottom: 8px;
+  }
+  .tag-1 { background: rgba(200,85,61,0.1); color: var(--accent); }
+  .tag-2 { background: rgba(59,110,140,0.1); color: var(--accent2); }
+  .tag-3 { background: rgba(90,122,58,0.1); color: var(--accent3); }
+
+  .chart-area {
+    padding: 2rem;
+  }
+  .chart-wrap {
+    position: relative;
+    width: 100%;
+  }
+  .chart-wrap canvas { width: 100% !important; }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    padding: 2rem;
+  }
+  .chart-panel {
+    background: var(--bg2);
+    border-radius: 2px;
+    padding: 1.25rem;
+  }
+  .chart-panel-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--ink3);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+  }
+
+  .insight-bar {
+    background: var(--ink);
+    color: var(--bg);
+    padding: 1rem 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    border-top: 1px solid var(--border);
+  }
+  .insight-item {
+    font-size: 12.5px;
+    color: rgba(245,242,235,0.7);
+  }
+  .insight-item strong {
+    color: var(--gold);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+  }
+
+  @media (max-width: 768px) {
+    header, main { padding: 1.5rem; }
+    .meta-strip { padding: 0.6rem 1.5rem; }
+    .two-col { grid-template-columns: 1fr; }
+    .question-header { grid-template-columns: 1fr; }
+    .q-number { font-size: 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-tag">Global Urban Index · 15 Countries · 45 Cities</div>
+  <h1>Cost of Living &amp; Quality of Life Analysis</h1>
+  <p>2024 / 2025 comparative indices — rent, salary, safety, healthcare &amp; pollution</p>
+</header>
+
+<div class="meta-strip">
+  <div class="meta-item"><strong>90</strong> city-year observations</div>
+  <div class="meta-item"><strong>15</strong> countries</div>
+  <div class="meta-item"><strong>45</strong> cities</div>
+  <div class="meta-item"><strong>12</strong> indicators tracked</div>
+</div>
+
+<main>
+
+  <!-- Q1 -->
+  <div class="section-label">Question 01</div>
+  <div class="question-card">
+    <div class="question-header">
+      <div class="q-number">01</div>
+      <div>
+        <div class="use-case-tag tag-1">Affordability · Housing Economics</div>
+        <div class="q-title">Where does rent consume the largest share of salary — and is it worsening?</div>
+        <div class="q-desc">Rent-to-salary ratio is the single most critical affordability measure for workers, expats and policy-makers. When rent exceeds 30–40% of income, households face "cost burden", cutting into food, healthcare and savings. This analysis reveals which cities are unaffordable today, and which are trending worse — informing decisions for relocating professionals, HR teams setting compensation, and housing policy advocates.</div>
+      </div>
+    </div>
+    <div class="chart-area">
+      <div class="chart-wrap" style="height:400px">
+        <canvas id="chart1"></canvas>
+      </div>
+    </div>
+    <div class="insight-bar" id="insight1"></div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="section-label">Question 02</div>
+  <div class="question-card">
+    <div class="question-header">
+      <div class="q-number">02</div>
+      <div>
+        <div class="use-case-tag tag-2">Wellbeing · Urban Planning</div>
+        <div class="q-title">Which cities offer the best Quality of Life relative to their cost burden?</div>
+        <div class="q-desc">High cost of living is tolerable when quality of life is also high — but many cities charge a premium without the payoff. Plotting Quality of Life Index against Rent Cost % reveals four quadrants: sweet spots (high QoL, low cost), poverty traps (low QoL, high cost), premium cities worth it, and bargains. This is essential for talent mobility decisions, expatriate planning, and government competitiveness reports.</div>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="chart-panel">
+        <div class="chart-panel-title">QoL Index by Country (2024 avg)</div>
+        <div class="chart-wrap" style="height:300px"><canvas id="chart2a"></canvas></div>
+      </div>
+      <div class="chart-panel">
+        <div class="chart-panel-title">QoL Index by Country (2025 avg)</div>
+        <div class="chart-wrap" style="height:300px"><canvas id="chart2b"></canvas></div>
+      </div>
+    </div>
+    <div class="chart-area" style="padding-top:0">
+      <div class="chart-wrap" style="height:340px"><canvas id="chart2c"></canvas></div>
+    </div>
+    <div class="insight-bar" id="insight2"></div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="section-label">Question 03</div>
+  <div class="question-card">
+    <div class="question-header">
+      <div class="q-number">03</div>
+      <div>
+        <div class="use-case-tag tag-3">Public Health · Liveability</div>
+        <div class="q-title">How do Safety, Healthcare and Pollution trade off across regions — and which cities are genuinely liveable?</div>
+        <div class="q-desc">Liveability goes beyond cost — a cheap city with high pollution, poor healthcare and low safety is a false bargain. This radar-style analysis scores cities on three pillars of liveability to reveal which regions consistently excel, which have hidden risks, and how city-level performance compares within the same country. Critical for international health organisations, insurance risk modelling, and individuals weighing where to live and raise families.</div>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="chart-panel">
+        <div class="chart-panel-title">Safety Index by Country (avg across years)</div>
+        <div class="chart-wrap" style="height:300px"><canvas id="chart3a"></canvas></div>
+      </div>
+      <div class="chart-panel">
+        <div class="chart-panel-title">Healthcare vs Pollution — Country averages</div>
+        <div class="chart-wrap" style="height:300px"><canvas id="chart3b"></canvas></div>
+      </div>
+    </div>
+    <div class="chart-area" style="padding-top:0">
+      <div class="chart-panel-title" style="padding: 0 0 0.75rem; font-family:'DM Mono',monospace; font-size:11px; letter-spacing:0.08em; color:var(--ink3); text-transform:uppercase;">Three-pillar liveability score — all countries (Safety + Healthcare − Pollution, normalised)</div>
+      <div class="chart-wrap" style="height:300px"><canvas id="chart3c"></canvas></div>
+    </div>
+    <div class="insight-bar" id="insight3"></div>
+  </div>
+
+</main>
+
+<script>
+const raw = [
+  ["India","Mumbai",2024,1879,115.76,102.64,65.82,5511,98.98,68.52,65.83,97.28,1.19,34.10],
+  ["India","Mumbai",2025,637,87.78,81.07,97.05,979,91.40,54.81,51.61,31.09,9.91,65.07],
+  ["India","Delhi",2024,1667,77.64,60.54,16.20,991,159.35,78.56,47.96,55.09,1.63,168.21],
+  ["India","Delhi",2025,2388,114.05,99.50,53.20,3704,59.53,55.55,58.01,81.07,1.44,64.47],
+  ["India","Bangalore",2024,2195,69.23,79.29,47.55,3290,164.12,68.06,75.84,64.57,1.45,66.72],
+  ["India","Bangalore",2025,692,99.75,47.76,52.34,1463,145.46,55.72,65.34,93.53,3.58,47.30],
+  ["USA","New York",2024,1978,102.89,56.02,21.54,2322,154.22,84.02,69.97,50.69,0.93,85.19],
+  ["USA","New York",2025,1095,106.26,53.06,90.87,2263,171.12,84.80,57.72,37.70,4.02,48.39],
+  ["USA","Los Angeles",2024,1700,95.34,40.04,44.97,1882,51.04,65.54,61.70,45.55,2.39,90.33],
+  ["USA","Los Angeles",2025,1557,73.63,106.00,42.47,2095,155.45,58.18,83.87,97.37,2.03,74.32],
+  ["USA","Chicago",2024,1936,69.94,42.58,66.81,5337,111.66,41.65,58.80,74.40,1.25,36.28],
+  ["USA","Chicago",2025,1961,60.14,74.26,98.78,5531,62.13,58.48,54.69,86.22,1.79,35.45],
+  ["UK","London",2024,497,77.92,97.15,82.86,3872,98.12,49.33,46.63,71.36,2.14,12.84],
+  ["UK","London",2025,2255,51.16,75.85,34.25,3511,64.43,87.03,60.90,66.24,0.98,64.23],
+  ["UK","Manchester",2024,940,97.30,91.47,32.77,4661,154.37,51.43,52.00,98.75,0.70,20.17],
+  ["UK","Manchester",2025,1180,66.93,46.52,91.26,3708,182.40,49.44,56.15,79.03,2.46,31.82],
+  ["UK","Birmingham",2024,1454,109.94,68.32,90.46,5323,62.62,48.08,80.94,72.45,1.70,27.32],
+  ["UK","Birmingham",2025,1796,96.45,40.35,28.67,5033,122.84,62.42,84.78,42.31,0.57,35.68],
+  ["Canada","Toronto",2024,1903,66.61,62.78,78.45,5854,158.14,55.40,66.70,65.62,1.34,32.51],
+  ["Canada","Toronto",2025,769,68.56,57.08,97.71,4036,123.01,85.30,62.38,54.51,2.42,19.05],
+  ["Canada","Vancouver",2024,1259,110.49,56.11,57.43,5242,165.28,42.18,84.78,62.90,1.10,24.02],
+  ["Canada","Vancouver",2025,1369,114.04,65.91,16.31,2927,99.61,67.64,67.89,98.62,0.56,46.77],
+  ["Canada","Montreal",2024,1439,70.61,66.96,87.35,3927,122.79,58.63,60.79,89.09,2.22,36.64],
+  ["Canada","Montreal",2025,1646,89.90,46.80,67.28,3501,103.80,52.71,56.81,52.58,1.92,47.02],
+  ["Germany","Berlin",2024,545,75.16,60.55,83.80,2441,180.06,85.66,65.45,65.11,3.43,22.33],
+  ["Germany","Berlin",2025,984,63.60,44.97,48.73,3301,183.50,56.90,60.02,36.58,1.48,29.81],
+  ["Germany","Munich",2024,2282,52.52,72.59,61.12,1748,175.84,83.02,55.01,32.72,3.50,130.55],
+  ["Germany","Munich",2025,1377,87.60,62.87,85.37,3651,194.79,62.86,78.68,43.61,2.34,37.72],
+  ["Germany","Hamburg",2024,346,98.97,49.68,26.28,5065,127.45,56.15,76.81,48.96,0.52,6.83],
+  ["Germany","Hamburg",2025,1381,55.49,41.77,96.83,3438,114.25,74.42,47.33,94.06,2.82,40.17],
+  ["France","Paris",2024,1419,88.45,90.02,71.12,5592,193.23,76.89,67.17,72.82,1.27,25.38],
+  ["France","Paris",2025,453,74.92,93.05,16.22,4645,63.77,44.71,57.46,98.57,0.35,9.75],
+  ["France","Lyon",2024,752,83.19,46.85,56.79,5246,101.95,63.23,70.99,33.36,1.08,14.33],
+  ["France","Lyon",2025,2081,94.46,43.17,46.84,4330,125.47,82.82,71.35,41.41,1.08,48.06],
+  ["France","Marseille",2024,635,94.97,41.86,64.79,4146,170.14,73.86,67.93,39.00,1.56,15.32],
+  ["France","Marseille",2025,1256,88.19,105.90,47.82,5887,185.80,49.79,47.77,37.05,0.81,21.34],
+  ["Australia","Sydney",2024,1053,97.81,44.98,42.11,2225,101.09,53.03,64.84,78.50,1.89,47.33],
+  ["Australia","Sydney",2025,1949,94.03,101.42,77.48,3948,195.14,67.40,61.94,69.80,1.96,49.37],
+  ["Australia","Melbourne",2024,1422,78.88,66.04,81.00,2287,180.07,68.09,54.54,77.59,3.54,62.18],
+  ["Australia","Melbourne",2025,1172,76.44,77.40,57.21,1328,98.01,84.78,60.57,30.76,4.31,88.25],
+  ["Australia","Brisbane",2024,375,74.84,106.98,72.53,5546,123.95,44.16,48.67,72.17,1.31,6.76],
+  ["Australia","Brisbane",2025,1792,102.67,95.41,82.12,2756,189.64,88.71,84.84,33.91,2.98,65.02],
+  ["Japan","Tokyo",2024,1538,88.21,89.41,97.34,1553,142.73,45.06,48.36,79.07,6.27,99.03],
+  ["Japan","Tokyo",2025,1716,107.53,89.44,21.91,3836,84.98,69.07,79.53,91.63,0.57,44.73],
+  ["Japan","Osaka",2024,1980,116.31,109.02,79.04,3741,156.23,64.08,60.12,79.36,2.11,52.93],
+  ["Japan","Osaka",2025,1013,113.44,47.78,56.87,5348,110.78,68.57,74.64,83.70,1.06,18.94],
+  ["Japan","Kyoto",2024,1194,95.44,92.22,64.59,4885,110.03,63.89,48.32,66.99,1.32,24.44],
+  ["Japan","Kyoto",2025,1440,117.43,40.85,97.44,2452,98.40,42.17,81.99,94.34,3.97,58.73],
+  ["China","Beijing",2024,1999,88.77,107.85,59.46,1856,82.52,54.72,84.83,78.78,3.20,107.70],
+  ["China","Beijing",2025,770,53.18,59.67,95.78,5663,109.18,45.34,58.43,41.88,1.69,13.60],
+  ["China","Shanghai",2024,389,77.18,56.06,37.60,5564,196.16,89.31,72.93,67.53,0.68,6.99],
+  ["China","Shanghai",2025,1228,78.78,82.19,38.03,3556,186.64,81.13,82.99,80.80,1.07,34.53],
+  ["China","Shenzhen",2024,2138,114.34,45.79,89.52,5572,74.73,60.56,76.10,63.63,1.61,38.37],
+  ["China","Shenzhen",2025,1562,60.53,81.59,47.38,4525,174.37,68.45,47.54,32.58,1.05,34.52],
+  ["Saudi Arabia","Riyadh",2024,1653,103.82,44.64,18.90,4900,81.37,68.98,58.66,67.61,0.39,33.73],
+  ["Saudi Arabia","Riyadh",2025,2442,78.02,88.84,30.31,3547,101.85,84.84,63.96,76.73,0.85,68.85],
+  ["Saudi Arabia","Jeddah",2024,2269,92.14,55.67,84.85,5299,102.14,41.59,66.95,67.41,1.60,42.82],
+  ["Saudi Arabia","Jeddah",2025,823,64.44,65.50,57.79,2896,122.17,74.39,65.47,40.99,2.00,28.42],
+  ["Saudi Arabia","Dammam",2024,347,54.28,59.38,83.53,5320,139.59,89.31,66.46,94.68,1.57,6.52],
+  ["Saudi Arabia","Dammam",2025,825,93.28,65.82,54.32,964,59.35,47.39,50.32,78.10,5.63,85.58],
+  ["Turkey","Istanbul",2024,1218,85.82,77.25,24.11,2506,86.37,53.46,60.09,31.40,0.96,48.60],
+  ["Turkey","Istanbul",2025,2276,108.85,46.24,60.50,5232,183.58,69.68,72.16,85.24,1.16,43.50],
+  ["Turkey","Ankara",2024,2456,83.57,80.89,77.63,5318,161.82,61.58,50.10,49.86,1.46,46.18],
+  ["Turkey","Ankara",2025,1841,112.98,82.53,35.77,2962,197.98,70.29,54.49,37.12,1.21,62.15],
+  ["Turkey","Izmir",2024,2033,75.57,74.15,87.32,4117,92.76,48.67,80.87,35.62,2.12,49.38],
+  ["Turkey","Izmir",2025,542,51.28,88.79,99.77,605,109.68,88.47,79.62,87.20,16.49,89.59],
+  ["Argentina","Buenos Aires",2024,480,51.03,22.50,33.22,798,112.46,40.79,56.34,57.25,4.16,60.15],
+  ["Argentina","Buenos Aires",2025,700,59.36,20.43,35.70,850,117.87,36.94,68.00,51.32,4.20,82.35],
+  ["Argentina","Rosario",2024,250,47.29,30.25,27.33,575,86.66,29.05,71.25,44.76,4.75,43.48],
+  ["Argentina","Rosario",2025,429,50.13,27.45,29.87,480,95.42,24.80,74.45,43.91,6.22,89.38],
+  ["Argentina","Mendoza",2024,452,30.67,18.75,20.59,675,141.23,42.03,55.76,35.33,3.05,66.96],
+  ["Argentina","Mendoza",2025,550,36.98,22.03,22.68,737,139.49,33.86,62.36,31.63,3.08,74.63],
+  ["Brazil","Sao Paulo",2024,1929,61.96,86.81,94.00,1446,130.26,63.83,78.54,44.36,6.50,133.40],
+  ["Brazil","Sao Paulo",2025,1733,72.66,69.78,58.15,4808,129.48,75.36,75.71,36.11,1.21,36.04],
+  ["Brazil","Rio de Janeiro",2024,2217,60.81,73.68,60.27,4344,105.38,62.71,66.94,68.42,1.39,51.04],
+  ["Brazil","Rio de Janeiro",2025,2360,97.92,46.15,26.80,2976,164.03,69.78,63.86,58.83,0.90,79.30],
+  ["Brazil","Brasilia",2024,1418,115.07,98.14,97.03,5029,189.94,89.55,53.20,56.55,1.93,28.20],
+  ["Brazil","Brasilia",2025,1619,100.51,43.37,81.43,4450,169.29,50.08,51.55,41.50,1.83,36.38],
+  ["South Africa","Cape Town",2024,2352,66.50,84.36,92.17,1200,181.58,59.62,77.66,60.74,7.68,196.00],
+  ["South Africa","Cape Town",2025,2188,102.33,75.19,34.74,1848,108.72,66.59,47.66,46.03,1.88,118.40],
+  ["South Africa","Johannesburg",2024,2270,80.21,63.30,77.10,2635,161.22,68.66,84.91,82.67,2.93,86.15],
+  ["South Africa","Johannesburg",2025,1250,60.02,54.32,75.70,5212,181.51,57.10,77.85,37.74,1.45,23.98],
+  ["South Africa","Durban",2024,2200,58.92,67.81,82.77,3828,84.39,76.11,73.80,74.88,2.16,57.47],
+  ["South Africa","Durban",2025,2255,87.99,57.63,44.38,4706,193.86,57.13,54.09,59.65,0.94,47.92],
+  ["Egypt","Cairo",2024,212,10.87,6.72,9.45,146,100.81,55.64,24.60,87.66,6.47,145.21],
+  ["Egypt","Cairo",2025,250,25.72,8.50,10.34,170,76.50,50.20,46.33,90.56,6.08,147.06],
+  ["Egypt","Alexandria",2024,145,20.85,13.26,9.50,124,76.50,50.20,46.33,90.56,7.66,116.94],
+  ["Egypt","Alexandria",2025,220,22.94,14.00,10.24,150,90.85,54.92,45.81,73.76,6.83,146.67],
+  ["Egypt","Giza",2024,350,17.84,1.97,18.94,178,46.88,50.12,65.33,98.67,10.64,196.63],
+  ["Egypt","Giza",2025,340,21.22,3.54,16.99,125,51.77,46.98,62.58,100.49,13.59,272.00]
+];
+
+const cols = { country:0,city:1,year:2,rent:3,food:4,transport:5,internet_usd:6,salary:7,qol:8,safety:9,healthcare:10,pollution:11,internet_pct:12,rent_pct:13 };
+const get = (row, col) => row[cols[col]];
+
+// Group by country — average across cities and years
+const countries = [...new Set(raw.map(r=>r[0]))];
+
+function avgByCountry(field) {
+  return countries.map(c => {
+    const rows = raw.filter(r=>r[0]===c);
+    return rows.reduce((s,r)=>s+get(r,field),0)/rows.length;
+  });
+}
+
+function avgByCountryYear(field, year) {
+  return countries.map(c => {
+    const rows = raw.filter(r=>r[0]===c && r[2]===year);
+    return rows.length ? rows.reduce((s,r)=>s+get(r,field),0)/rows.length : 0;
+  });
+}
+
+// Palette
+const ACCENT = '#C8553D';
+const ACCENT2 = '#3B6E8C';
+const ACCENT3 = '#5A7A3A';
+const GOLD = '#B89A4E';
+const GRAY = '#9C968E';
+
+const chartDefaults = {
+  font: { family: "'Instrument Sans', sans-serif" },
+  color: '#5C5750'
+};
+Chart.defaults.font.family = chartDefaults.font.family;
+Chart.defaults.color = chartDefaults.color;
+
+// ─── CHART 1: Rent % of Salary — top 15 cities, both years stacked/grouped ───
+{
+  // Get all city averages for rent_pct across both years — pick top 15 highest
+  const cityData = {};
+  raw.forEach(r => {
+    const key = r[1];
+    if(!cityData[key]) cityData[key] = { city: r[1], country: r[0], v2024: null, v2025: null };
+    if(r[2]===2024) cityData[key].v2024 = get(r,'rent_pct');
+    if(r[2]===2025) cityData[key].v2025 = get(r,'rent_pct');
+  });
+  const sorted = Object.values(cityData)
+    .filter(d=>d.v2024!==null && d.v2025!==null)
+    .sort((a,b)=>((b.v2024+b.v2025)/2)-((a.v2024+a.v2025)/2))
+    .slice(0,15);
+
+  const labels = sorted.map(d=>`${d.city}\n(${d.country})`);
+
+  new Chart(document.getElementById('chart1'), {
+    type:'bar',
+    data:{
+      labels: sorted.map(d=>d.city),
+      datasets:[
+        { label:'2024', data: sorted.map(d=>Math.round(d.v2024)), backgroundColor: ACCENT+'CC', borderColor: ACCENT, borderWidth:1, borderRadius:2 },
+        { label:'2025', data: sorted.map(d=>Math.round(d.v2025)), backgroundColor: ACCENT2+'CC', borderColor: ACCENT2, borderWidth:1, borderRadius:2 }
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{ position:'top', labels:{ boxWidth:12, padding:16, font:{size:12} } },
+        tooltip:{ callbacks:{ label: ctx=>`${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}% of salary` } }
+      },
+      scales:{
+        x:{ ticks:{ font:{size:11} }, grid:{display:false} },
+        y:{ ticks:{ callback: v=>v+'%', font:{size:11} }, grid:{ color:'rgba(26,24,20,0.06)' }, title:{ display:true, text:'Rent as % of Average Monthly Salary', font:{size:11} } }
+      }
+    }
+  });
+
+  // insight
+  const worst = sorted[0];
+  const best = sorted[sorted.length-1];
+  document.getElementById('insight1').innerHTML = `
+    <div class="insight-item"><strong>Highest burden</strong> ${worst.city} (${worst.country}) — avg ${((worst.v2024+worst.v2025)/2).toFixed(0)}% of salary on rent</div>
+    <div class="insight-item"><strong>Most affordable</strong> ${best.city} (${best.country}) — avg ${((best.v2024+best.v2025)/2).toFixed(0)}%</div>
+    <div class="insight-item"><strong>Rule of thumb</strong> Economists flag >30% as cost-burdened housing</div>
+  `;
+}
+
+// ─── CHART 2a & 2b: QoL by country horizontal bar ───
+{
+  const qol24 = avgByCountryYear('qol',2024);
+  const qol25 = avgByCountryYear('qol',2025);
+  const makeQolChart = (id, data, year, color) => {
+    const sorted = countries.map((c,i)=>({c,v:data[i]})).sort((a,b)=>b.v-a.v);
+    new Chart(document.getElementById(id),{
+      type:'bar',
+      data:{
+        labels: sorted.map(d=>d.c),
+        datasets:[{ data: sorted.map(d=>Math.round(d.v)), backgroundColor: sorted.map(d=>d.v>150?color+'EE':color+'88'), borderColor: color, borderWidth:1, borderRadius:2, label:`QoL ${year}` }]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false, indexAxis:'y',
+        plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:ctx=>`QoL: ${ctx.parsed.x.toFixed(1)}` } } },
+        scales:{
+          x:{ ticks:{font:{size:10}}, grid:{color:'rgba(26,24,20,0.06)'} },
+          y:{ ticks:{font:{size:10}}, grid:{display:false} }
+        }
+      }
+    });
+  };
+  makeQolChart('chart2a', qol24, 2024, ACCENT);
+  makeQolChart('chart2b', qol25, 2025, ACCENT2);
+
+  // ─── CHART 2c: QoL vs Rent burden scatter by country ───
+  const rent24 = avgByCountryYear('rent_pct',2024);
+  const rent25 = avgByCountryYear('rent_pct',2025);
+  const points24 = countries.map((c,i)=>({x:Math.round(rent24[i]),y:Math.round(qol24[i]),label:c}));
+  const points25 = countries.map((c,i)=>({x:Math.round(rent25[i]),y:Math.round(qol25[i]),label:c}));
+
+  new Chart(document.getElementById('chart2c'),{
+    type:'scatter',
+    data:{
+      datasets:[
+        { label:'2024', data: points24, backgroundColor: ACCENT+'BB', borderColor: ACCENT, borderWidth:1.5, pointRadius:7, pointHoverRadius:9 },
+        { label:'2025', data: points25, backgroundColor: ACCENT2+'BB', borderColor: ACCENT2, borderWidth:1.5, pointRadius:7, pointHoverRadius:9 }
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{ position:'top', labels:{boxWidth:12, font:{size:12}} },
+        tooltip:{ callbacks:{ label: ctx => `${ctx.raw.label}: Rent ${ctx.parsed.x}% | QoL ${ctx.parsed.y}` } }
+      },
+      scales:{
+        x:{ title:{display:true, text:'Rent as % of Salary', font:{size:11}}, ticks:{callback:v=>v+'%', font:{size:11}}, grid:{color:'rgba(26,24,20,0.06)'} },
+        y:{ title:{display:true, text:'Quality of Life Index', font:{size:11}}, ticks:{font:{size:11}}, grid:{color:'rgba(26,24,20,0.06)'} }
+      }
+    }
+  });
+
+  const topQol = countries.map((c,i)=>({c,v:(qol24[i]+qol25[i])/2})).sort((a,b)=>b.v-a.v)[0];
+  const topRent = countries.map((c,i)=>({c,v:(rent24[i]+rent25[i])/2})).sort((a,b)=>b.v-a.v)[0];
+  document.getElementById('insight2').innerHTML = `
+    <div class="insight-item"><strong>Best QoL</strong> ${topQol.c} — avg index ${topQol.v.toFixed(0)}</div>
+    <div class="insight-item"><strong>Most rent-burdened</strong> ${topRent.c} — avg ${topRent.v.toFixed(0)}% of salary on rent</div>
+    <div class="insight-item"><strong>Key insight</strong> High QoL doesn't always mean high cost — several emerging markets score well</div>
+  `;
+}
+
+// ─── CHART 3a: Safety Index by country ───
+{
+  const safety = avgByCountry('safety');
+  const sorted = countries.map((c,i)=>({c,v:safety[i]})).sort((a,b)=>b.v-a.v);
+
+  new Chart(document.getElementById('chart3a'),{
+    type:'bar',
+    data:{
+      labels: sorted.map(d=>d.c),
+      datasets:[{ data: sorted.map(d=>Math.round(d.v)), backgroundColor: sorted.map(d=>d.v>65?ACCENT3+'CC':GOLD+'99'), borderColor: sorted.map(d=>d.v>65?ACCENT3:GOLD), borderWidth:1, borderRadius:2, label:'Safety' }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false, indexAxis:'y',
+      plugins:{ legend:{display:false}, tooltip:{callbacks:{label:ctx=>`Safety: ${ctx.parsed.x.toFixed(1)}`}} },
+      scales:{
+        x:{ ticks:{font:{size:10}}, grid:{color:'rgba(26,24,20,0.06)'} },
+        y:{ ticks:{font:{size:10}}, grid:{display:false} }
+      }
+    }
+  });
+
+  // ─── CHART 3b: Healthcare vs Pollution ───
+  const hc = avgByCountry('healthcare');
+  const pol = avgByCountry('pollution');
+  const points = countries.map((c,i)=>({x:Math.round(hc[i]),y:Math.round(pol[i]),label:c}));
+
+  new Chart(document.getElementById('chart3b'),{
+    type:'scatter',
+    data:{ datasets:[{ data:points, backgroundColor: ACCENT+'BB', borderColor: ACCENT, borderWidth:1.5, pointRadius:7, pointHoverRadius:9, label:'Country' }] },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:ctx=>`${ctx.raw.label}: HC ${ctx.parsed.x} | Pollution ${ctx.parsed.y}`}}
+      },
+      scales:{
+        x:{ title:{display:true,text:'Healthcare Index',font:{size:11}}, ticks:{font:{size:10}}, grid:{color:'rgba(26,24,20,0.06)'} },
+        y:{ title:{display:true,text:'Pollution Index (higher = worse)',font:{size:11}}, ticks:{font:{size:10}}, grid:{color:'rgba(26,24,20,0.06)'} }
+      }
+    }
+  });
+
+  // ─── CHART 3c: Composite liveability (Safety + Healthcare - Pollution normalised) ───
+  const maxS = Math.max(...safety), maxH = Math.max(...hc), maxP = Math.max(...pol);
+  const liveability = countries.map((c,i)=>{
+    const s = safety[i]/maxS, h = hc[i]/maxH, p = pol[i]/maxP;
+    return { c, v: Math.round(((s+h-p+1)/3)*100) };
+  }).sort((a,b)=>b.v-a.v);
+
+  new Chart(document.getElementById('chart3c'),{
+    type:'bar',
+    data:{
+      labels: liveability.map(d=>d.c),
+      datasets:[{
+        data: liveability.map(d=>d.v),
+        backgroundColor: liveability.map(d=>d.v>55?ACCENT3+'CC':d.v>45?GOLD+'99':ACCENT+'88'),
+        borderColor: liveability.map(d=>d.v>55?ACCENT3:d.v>45?GOLD:ACCENT),
+        borderWidth:1, borderRadius:2, label:'Liveability score'
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{callbacks:{label:ctx=>`Liveability score: ${ctx.parsed.y}`}} },
+      scales:{
+        x:{ ticks:{font:{size:11}}, grid:{display:false} },
+        y:{ ticks:{font:{size:11}}, grid:{color:'rgba(26,24,20,0.06)'}, title:{display:true,text:'Composite score (higher = more liveable)',font:{size:11}} }
+      }
+    }
+  });
+
+  const top = liveability[0], bottom = liveability[liveability.length-1];
+  document.getElementById('insight3').innerHTML = `
+    <div class="insight-item"><strong>Most liveable</strong> ${top.c} — composite score ${top.v}</div>
+    <div class="insight-item"><strong>Least liveable</strong> ${bottom.c} — composite score ${bottom.v}</div>
+    <div class="insight-item"><strong>Methodology</strong> (Safety + Healthcare − Pollution) normalised to 0–100 scale</div>
+  `;
+}
+</script>
+</body>
+</html>
