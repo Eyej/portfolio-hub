@@ -107,6 +107,50 @@ I replaced the emojis with Lucide Icons. Might make more changes
   .stat-num { font-size: 1.75rem; font-weight: 700; letter-spacing: -1px; }
   .stat-label { font-size: 0.8rem; margin-top: 0.25rem; opacity: 0.85; }
 
+/*New design style for revised layout, done 24-Nov-2026*/
+
+   /* ---------- Page switching (Home / About) ---------- */
+   .page { display: none; }
+   .page.active { display: block; animation: pageFade 0.35s ease; }
+   @keyframes pageFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+   a.nav-logo { text-decoration: none; }
+   .nav-links a.current { color: var(--purple, #2F004F); border-bottom-color: var(--pink, #F0A7A0); }
+
+   /* ---------- About page ---------- */
+   #about-page { padding-top: 5rem; }
+   .about-hero { display: grid; grid-template-columns: 300px 1fr; gap: 4rem; align-items: center; margin-top: 1rem; }
+
+   .portrait { position: relative; width: 100%; max-width: 300px; aspect-ratio: 4 / 5; margin: 0 auto; }
+   .portrait::before {
+     content: ""; position: absolute; inset: 0; transform: translate(16px, 16px);
+     background: var(--sage, #9CB380); border-radius: 28px;
+   }
+   .portrait::after {
+     content: ""; position: absolute; width: 90px; height: 90px; border-radius: 50%;
+     background: var(--pink, #F0A7A0); top: -26px; left: -26px;
+   }
+   .portrait-frame {
+     position: relative; z-index: 1; width: 100%; height: 100%;
+     border-radius: 28px; overflow: hidden; background: var(--blue, #7A9CC6);
+     display: flex; align-items: center; justify-content: center;
+     border: 4px solid #fff;
+   }
+   .portrait-frame .fallback { position: absolute; font-size: 3.5rem; font-weight: 700; color: var(--purple, #2F004F); letter-spacing: -2px; }
+   .portrait-frame img { position: relative; width: 100%; height: 100%; object-fit: cover; display: block; }
+
+   .about-actions { margin-top: 2rem; display: flex; flex-wrap: wrap; gap: 0.75rem; }
+   .about-actions .btn-outline { margin-left: 0; }
+
+   #about-page .stat-grid { grid-template-columns: repeat(4, 1fr); margin-top: 4rem; }
+
+   @media (max-width: 760px) {
+     .about-hero { grid-template-columns: 1fr; gap: 3rem; }
+     .portrait { max-width: 260px; }
+     #about-page .stat-grid { grid-template-columns: 1fr 1fr; }
+   }
+
+
   /* SKILLS */
   .skills-grid { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
   .skill-chip {
@@ -155,6 +199,26 @@ I replaced the emojis with Lucide Icons. Might make more changes
     border-bottom: 2px solid var(--card-accent); align-self: flex-start;
   }
   .project-link:hover { gap: 0.65rem; }
+
+   /* ---------- Project preview images ---------- */
+   .project-thumb {
+     display: block;
+     margin: -1.75rem -1.75rem 0.25rem;      /* stretch to the card edges */
+     aspect-ratio: 16 / 10;
+     overflow: hidden;
+     background: var(--card-accent, #9CB380); /* shows if an image is missing */
+     border-radius: 7px 7px 0 0;
+   }
+   .project-thumb img {
+     width: 100%;
+     height: 100%;
+     display: block;
+     object-fit: cover;
+     object-position: top;                    /* keeps the top of the dashboard in view */
+     transition: transform 0.4s ease;
+   }
+   .project-card:hover .project-thumb img { transform: scale(1.04); }
+
 
   /* CONTACT */
   #contact { text-align: center; }
